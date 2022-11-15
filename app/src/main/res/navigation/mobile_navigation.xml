@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_photos">
+
+    <fragment
+        android:id="@+id/navigation_photos"
+        android:name="com.bytza.photoarchive.ui.photos.PotosFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_photos" />
+
+    <fragment
+        android:id="@+id/navigation_albums"
+        android:name="com.bytza.photoarchive.ui.albums.AlbumsFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_albums" />
+
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.bytza.photoarchive.ui.account.AccountFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_navigation_account_to_navigation_login"
+            app:destination="@id/navigation_login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.bytza.photoarchive.ui.account.LoginFragment"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_account"
+            app:destination="@id/navigation_account" />
+    </fragment>
+</navigation>
