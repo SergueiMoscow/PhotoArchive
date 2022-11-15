@@ -9,7 +9,7 @@ import com.bytza.photoarchive.databinding.PhotoListItemBinding
 import com.bytza.photoarchive.model.photo.PhotoRemote
 import com.squareup.picasso.Picasso
 
-class PhotosRemoteListAdapter : RecyclerView.Adapter<PhotosRemoteListAdapter.ViewHolder>() {
+class PhotosRemoteListAdapter(val listener: ClickListener) : RecyclerView.Adapter<PhotosRemoteListAdapter.ViewHolder>() {
     var items: List<PhotoRemote> = mutableListOf()
         set(value) {
             field = value
@@ -36,13 +36,27 @@ class PhotosRemoteListAdapter : RecyclerView.Adapter<PhotosRemoteListAdapter.Vie
         val url  = items[position].fname
         val view = holder.binding.photoImageView
         Picasso.get().load(url).into(view)
-        holder.itemView.setOnClickListener {
-            itemClick(items[position])
+        holder.binding.remoteCardView.setOnClickListener {
+        //holder.itemView.setOnClickListener {
+            listener.onClickItem(items[position])
+        }
+        holder.binding.likeImageView.setOnClickListener{
+            listener.onClickFavorite(items[position])
+        }
+        holder.binding.shareImageView.setOnClickListener{
+            listener.onClickShare(items[position])
         }
     }
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    interface ClickListener {
+        fun onClickItem(photo: PhotoRemote) {}
+        fun onClickFavorite(photo: PhotoRemote) {}
+        fun onClickShare(photo: PhotoRemote) {}
+
     }
 
 }

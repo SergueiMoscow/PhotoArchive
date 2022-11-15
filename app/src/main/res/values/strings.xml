@@ -11,4 +11,5 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="demo">demo</string>
+    <string name="local_photo">Local photo</string>
 </resources>

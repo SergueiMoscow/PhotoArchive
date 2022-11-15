@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_albums"
-        android:name="com.bytza.photoarchive.ui.albums.AlbumsFragment"
+        android:name="com.bytza.photoarchive.ui.photoslocal.PhotosLocalFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_albums" />
+        tools:layout="@layout/fragment_photos_local" />
 
     <fragment
         android:id="@+id/navigation_account"

@@ -1,10 +1,10 @@
-package com.bytza.photoarchive.ui.albums
+package com.bytza.photoarchive.ui.photoslocal
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class AlbumsViewModel : ViewModel() {
+class PhotosLocalViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"
