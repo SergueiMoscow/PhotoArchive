@@ -9,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bytza.photoarchive.databinding.ActivityMainBinding
+import com.bytza.photoarchive.model.DbConnection
 
 class MainActivity : AppCompatActivity() {
     val PREFS_FILENAME = "settings"
@@ -17,11 +18,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var aaa=getApplicationInfo().dataDir
+        var db = DbConnection.getDatabase(this)
+        db.dataDir= application.dataDir.toString()
+        var prefs: SharedPreferences?=this.getSharedPreferences(PREFS_FILENAME, 0)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
 
         val navView: BottomNavigationView = binding.navView
 
@@ -35,9 +38,5 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        var prefs: SharedPreferences?=this.getSharedPreferences(PREFS_FILENAME, 0)
-        var token: String? = prefs!!.getString("token", null)
-        if (token==null)
-            navController.navigate(R.id.navigation_login)
     }
 }

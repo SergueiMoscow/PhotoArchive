@@ -36,11 +36,13 @@ class PhotosLocalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val db = Room.databaseBuilder(requireContext(), DbConnection::class.java, "db").build()
+        //val db = Room.databaseBuilder(requireContext(), DbConnection::class.java, "db").build()
+        val db = DbConnection.getDatabase(requireContext())
         val repository = PhotosLocalRepository(db)
+        repository.getAll()
         val adapter = PhotosLocalListAdapter()
 
-        repository.photosLocal.observe(viewLifecycleOwner) {
+        repository.photosLocal?.observe(viewLifecycleOwner) {
             adapter.updateList(it)
         }
 

@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
             result.enqueue(object: Callback<String>{
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     val token = response.body()
-                    binding.tokenTextView.text=token
+                    binding.remoteIdTextView.text=token
 
                     val prefs: SharedPreferences? =
                         getActivity()?.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
@@ -71,10 +71,10 @@ class LoginFragment : Fragment() {
                     Navigation.findNavController(it).navigate(R.id.action_navigation_login_to_navigation_account)
                 }
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    binding.tokenTextView.text="Login failed"
+                    binding.remoteIdTextView.text="Login failed"
                 }
             })
-            binding.tokenTextView.text = result.toString()
+            binding.remoteIdTextView.text = result.toString()
         }
     }
 

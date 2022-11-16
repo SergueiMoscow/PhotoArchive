@@ -9,7 +9,11 @@
         android:id="@+id/navigation_photos"
         android:name="com.bytza.photoarchive.ui.photos.PotosFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_photos" />
+        tools:layout="@layout/fragment_photos" >
+        <action
+            android:id="@+id/action_navigation_photos_to_navigation_edit_remote"
+            app:destination="@id/navigation_edit_remote" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_albums"
@@ -34,5 +38,14 @@
         <action
             android:id="@+id/action_navigation_login_to_navigation_account"
             app:destination="@id/navigation_account" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_edit_remote"
+        android:name="com.bytza.photoarchive.ui.EditPhotoFragment"
+        android:label="title_edit_photo"
+        tools:layout="@layout/fragment_edit_photo">
+        <action
+            android:id="@+id/action_navigation_edit_remote_to_navigation_photos"
+            app:destination="@id/navigation_photos" />
     </fragment>
 </navigation>

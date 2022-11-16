@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.PhotoLocalListItemBinding
 import com.bytza.photoarchive.model.photo.PhotosLocal
+import com.squareup.picasso.Picasso
 
 class PhotosLocalListAdapter : RecyclerView.Adapter<PhotosLocalListAdapter.ViewHolder>() {
 
@@ -30,6 +31,9 @@ class PhotosLocalListAdapter : RecyclerView.Adapter<PhotosLocalListAdapter.ViewH
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.photo = users[position]
+        val view = holder.binding.localPhotoImageView
+        Picasso.get().load(users[position].fname).into(view)
+
     }
 
     override fun getItemCount(): Int {

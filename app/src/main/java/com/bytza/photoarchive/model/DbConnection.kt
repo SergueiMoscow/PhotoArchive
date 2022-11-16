@@ -8,9 +8,10 @@ import com.bytza.photoarchive.model.photo.PhotosLocal
 import com.bytza.photoarchive.model.photo.PhotosLocalDao
 
 
-@Database(entities = [PhotosLocal::class], version = 1, exportSchema = true)
+@Database(entities = [PhotosLocal::class], version = 2, exportSchema = true)
 abstract class DbConnection : RoomDatabase() {
-    abstract fun photosLocalDao(): PhotosLocalDao
+    abstract fun getDao(): PhotosLocalDao
+    var dataDir: String? = null
 
     companion object {
         private var INSTANCE: DbConnection? = null
@@ -22,6 +23,9 @@ abstract class DbConnection : RoomDatabase() {
                             .build()
                 }
             }
+            return INSTANCE!!
+        }
+        fun getDatabase() : DbConnection {
             return INSTANCE!!
         }
     }

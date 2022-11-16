@@ -15,11 +15,15 @@ class PhotosRemoteListAdapter(val listener: ClickListener) : RecyclerView.Adapte
             field = value
             notifyDataSetChanged()
         }
+    var remoteIdList: List<Int> = mutableListOf()
+        set(value) {
+            field = value
+        }
 
-    private var itemClick: (PhotoRemote) -> Unit = {}
-    fun itemClick(listener: (PhotoRemote) -> Unit) {
-        itemClick = listener
-    }
+//    private var itemClick: (PhotoRemote) -> Unit = {}
+//    fun itemClick(listener: (PhotoRemote) -> Unit) {
+//        itemClick = listener
+//    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var binding = PhotoListItemBinding.bind(view)

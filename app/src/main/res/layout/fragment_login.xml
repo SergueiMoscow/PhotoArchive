@@ -45,11 +45,11 @@
         app:layout_constraintTop_toBottomOf="@+id/edit_text_password" />
 
     <TextView
-        android:id="@+id/tokenTextView"
+        android:id="@+id/remoteIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="token"
+        android:text="Remote Id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
