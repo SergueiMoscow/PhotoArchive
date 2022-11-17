@@ -1,21 +1,22 @@
 package com.bytza.photoarchive.ui.photoslocal
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.PhotoLocalListItemBinding
 import com.bytza.photoarchive.model.photo.PhotosLocal
-import com.squareup.picasso.Picasso
 
-class PhotosLocalListAdapter : RecyclerView.Adapter<PhotosLocalListAdapter.ViewHolder>() {
+class PhotosLocalListAdapter(val listener: ClickListener) : RecyclerView.Adapter<PhotosLocalListAdapter.ViewHolder>() {
 
-    var users: List<PhotosLocal> = mutableListOf()
+    var photosLocal: List<PhotosLocal> = mutableListOf()
 
 
-    fun updateList(users: List<PhotosLocal>){
-        this.users = users
+    fun updateList(photosLocal: List<PhotosLocal>){
+        this.photosLocal = photosLocal
         notifyDataSetChanged()
     }
 
@@ -30,14 +31,23 @@ class PhotosLocalListAdapter : RecyclerView.Adapter<PhotosLocalListAdapter.ViewH
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.photo = users[position]
+        holder.binding.photo = photosLocal[position]
         val view = holder.binding.localPhotoImageView
-        Picasso.get().load(users[position].fname).into(view)
+        view.setImageBitmap(BitmapFactory.decodeFile(photosLocal[position].fname))
+        holder.binding.shareImageView.setOnClickListener() {
+           listener.onClickShare(photosLocal[position])
+        }
 
     }
 
     override fun getItemCount(): Int {
-        return users.size
+        return photosLocal.size
+    }
+
+    interface ClickListener {
+        fun onClickItem(photo: PhotosLocal) {}
+        fun onClickFavorite(photo: PhotosLocal, imageView: ImageView) {}
+        fun onClickShare(photo: PhotosLocal) {}
     }
 
 

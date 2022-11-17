@@ -1,6 +1,8 @@
 package com.bytza.photoarchive.model.photo
 
 import android.graphics.Bitmap
+import android.os.Environment
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.bytza.photoarchive.model.DbConnection
 import com.squareup.picasso.Picasso
@@ -14,7 +16,8 @@ import java.io.IOException
 class PhotosLocalRepository(var dataBase: DbConnection) {
     var photosLocal: LiveData<List<PhotosLocal>>? = null
     var remoteIdList: LiveData<List<Int>>? = null
-    val pathForImages = "/savedimages"
+    val pathForImages = "/images"
+    val LOG_DEBUG = "LOG_DEBUG"
 
     fun getAll() {//: LiveData<List<PhotosLocal>> {
         photosLocal = dataBase.getDao().getAll()
@@ -35,13 +38,25 @@ class PhotosLocalRepository(var dataBase: DbConnection) {
         remoteIdList = dataBase.getDao().getRemoteIds()
     }
 
+    fun deleteByRemoteId(photo: PhotoRemote) {
+        val photoLocalFileName = dataBase.dataDir + pathForImages + "/" + justFileName(photo.fname)
+        GlobalScope.launch {
+            deleteFile(photoLocalFileName)
+            dataBase.getDao().deleteByRemoteId(photo.id)
+            Log.d(LOG_DEBUG, "Record deleted")
+        }.start()
+
+    }
+
     fun insert(photoLocal: PhotosLocal) {
         GlobalScope.launch {
+            Log.d(LOG_DEBUG, "Insert begin")
             val photoRemoteURL = photoLocal.fname
             val photoLocalFileName = dataBase.dataDir + pathForImages + "/" + justFileName(photoLocal.fname)
             saveImage(Picasso.get().load(photoRemoteURL).get(), photoLocalFileName)
             photoLocal.fname = photoLocalFileName
             dataBase.getDao().insertPhoto(photoLocal)
+            Log.d(LOG_DEBUG, "Insert end (${photoLocal.fname})")
         }.start()
     }
 
@@ -56,6 +71,9 @@ class PhotosLocalRepository(var dataBase: DbConnection) {
         //val file = File(dataBase.dataDir) //Environment.getDataDirectory()
         //val dir = File(file.absolutePath + pathForImages)
         //val outfile = File(dir, filename)
+        val justPath = justPath(fileName)
+        val outDir=File(justPath)
+        outDir.mkdirs()
         val outFile = File(fileName)
         var outputstream: FileOutputStream? = null
         try {
@@ -63,9 +81,17 @@ class PhotosLocalRepository(var dataBase: DbConnection) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputstream)
             outputstream.flush()
             outputstream.close()
+            Log.d(LOG_DEBUG, "Image copy Ok")
         } catch (e: IOException) {
             e.printStackTrace()
+            Log.e(LOG_DEBUG, "Image copy error")
         }
+    }
+
+    fun deleteFile(fileName: String) {
+        val file = File(fileName)
+        if (file.exists()) file.delete()
+        Log.d(LOG_DEBUG, "Image deleted")
     }
 
     fun getImageFileName(fileName: String) :String {
@@ -73,6 +99,10 @@ class PhotosLocalRepository(var dataBase: DbConnection) {
         val dir = File(file?.absolutePath + pathForImages)
         val outfile = File(dir, fileName)
         return ""
+    }
+
+    fun getLocalFileNameByRemoteId(id: Int): String {
+        return dataBase.getDao().getLocalFileNameByRemoteId(id)
     }
 }
 

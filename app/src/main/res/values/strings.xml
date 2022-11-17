@@ -15,4 +15,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="save">Save</string>
+    <string name="remote">Remote</string>
+    <string name="title_local">Local</string>
+    <string name="title_remote">Remote</string>
+    <string name="base_url">https://sushkovs.com/photoarchive/api</string>
+    <string name="share_sith">Share</string>
 </resources>

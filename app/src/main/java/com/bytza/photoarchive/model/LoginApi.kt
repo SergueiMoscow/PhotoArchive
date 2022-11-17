@@ -7,6 +7,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface LoginApi {
-        @GET("/login.php")
-        fun login(@Query("u") u:String, @Query("p") p:String): Call<String>
+        @GET("photoarchive/api/login.php")
+        fun login(@Query("u") u:String, @Query("p") p:String): Call<LoginResponse>
 }

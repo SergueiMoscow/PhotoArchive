@@ -31,21 +31,22 @@ class AccountFragment : Fragment() {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textNotifications
-        accountViewModel.token.observe(viewLifecycleOwner) {
-
-        }
+//        accountViewModel.session.observe(viewLifecycleOwner) {
+////            binding.textViewSession.text = accountViewModel.session.toString()
+//            var sess2: String? = accountViewModel.session.value?.session
+//            binding.textViewSession.text =  sess2
+//        }
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val prefs = getActivity()?.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
+        binding.textViewSession.text=prefs?.getString("session", "No session")
         binding.logoutButton.setOnClickListener(){
-            val prefs: SharedPreferences? =
-                getActivity()?.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
             if (prefs != null) {
                 val prefsEditor = prefs.edit()
-                prefsEditor.remove("token")
+                prefsEditor.remove("session")
                 prefsEditor.commit()
                 Navigation.findNavController(it).navigate(R.id.action_navigation_account_to_navigation_login)
             }

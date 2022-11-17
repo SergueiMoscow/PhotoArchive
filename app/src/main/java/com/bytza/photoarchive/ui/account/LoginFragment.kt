@@ -12,10 +12,13 @@ import androidx.navigation.Navigation
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.FragmentLoginBinding
 import com.bytza.photoarchive.model.LoginApi
+import com.bytza.photoarchive.model.LoginResponse
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
@@ -48,29 +51,30 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.loginButton.setOnClickListener() {
-            val user = binding.editTextPersonName.toString()
-            val pass = binding.editTextPassword.toString()
+            val user = binding.editTextPersonName.text.toString()
+            val pass = binding.editTextPassword.text.toString()
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://sushkovs.com")
-                .addConverterFactory(ScalarsConverterFactory.create())
+                .baseUrl("https://sushkovs.com/")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build()
             var loginApi = retrofit.create(LoginApi::class.java)
             var result = loginApi.login(user, pass)
-            result.enqueue(object: Callback<String>{
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    val token = response.body()
-                    binding.remoteIdTextView.text=token
+            result.enqueue(object: Callback<LoginResponse>{
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    var gson = Gson()
+                    val loginResponse = response.body() //gson.fromJson<LoginResponse>(response.body(), LoginResponse::class.java)
+                    binding.remoteIdTextView.text = if (loginResponse?.session == "") loginResponse.message else loginResponse?.session
 
                     val prefs: SharedPreferences? =
                         getActivity()?.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
                     if (prefs != null) {
                         val prefsEditor = prefs.edit()
-                        prefsEditor.putString("token", token)
+                        prefsEditor.putString("session", loginResponse?.session)
                         prefsEditor.commit()
                     }
                     Navigation.findNavController(it).navigate(R.id.action_navigation_login_to_navigation_account)
                 }
-                override fun onFailure(call: Call<String>, t: Throwable) {
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     binding.remoteIdTextView.text="Login failed"
                 }
             })

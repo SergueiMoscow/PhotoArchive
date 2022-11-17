@@ -16,8 +16,11 @@ interface PhotosLocalDao {
     @Query("Select distinct remoteid from photos")
     fun getRemoteIds(): LiveData<List<Int>>
 
-    @Query("Select count(*) from photos where remoteid=:id")
+    @Query("Select count(id) from photos where remoteid=:id")
     fun remoteIdExists(id: Int) :Int?
+
+    @Query("Delete from photos where remoteid = :id")
+    fun deleteByRemoteId(id: Int)
 
     //@Query("select * from photos where id = :id")
     //suspend fun getById(id: Int)
@@ -27,5 +30,8 @@ interface PhotosLocalDao {
 
     @Delete
     suspend fun delete(PhotosLocal: PhotosLocal)
+
+    @Query("select fname from photos where remoteid = :id limit 1")
+    fun getLocalFileNameByRemoteId(id: Int): String
 
 }

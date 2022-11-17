@@ -59,6 +59,13 @@ class EditPhotoFragment : Fragment() {
         }
     }
 
+    fun onBackPressed() {
+        var fm = getActivity()?.getSupportFragmentManager()
+        if (fm != null) {
+            fm.popBackStack()
+        }
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of

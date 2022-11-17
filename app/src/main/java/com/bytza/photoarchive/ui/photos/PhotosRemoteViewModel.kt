@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.bytza.photoarchive.R
 import com.bytza.photoarchive.model.DbConnection
 import com.bytza.photoarchive.model.photo.*
 import retrofit2.Retrofit
@@ -20,7 +21,7 @@ class PhotosRemoteViewModel(application: Application) : AndroidViewModel(applica
 //    private lateinit var localRepository: PhotosLocalRepository
     init {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://sushkovs.com")
+            .baseUrl("https://sushkovs.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         photoService = retrofit.create(PhotoService::class.java)

@@ -3,6 +3,7 @@ package com.bytza.photoarchive.ui.photos
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.PhotoListItemBinding
@@ -40,12 +41,14 @@ class PhotosRemoteListAdapter(val listener: ClickListener) : RecyclerView.Adapte
         val url  = items[position].fname
         val view = holder.binding.photoImageView
         Picasso.get().load(url).into(view)
+        if (items[position].local > 0)
+            holder.binding.likeImageView.setImageResource(R.drawable.ic_baseline_favorite_24)
+            //Picasso.get().load(R.drawable.ic_baseline_favorite_24).into(holder.binding.likeImageView)
         holder.binding.remoteCardView.setOnClickListener {
-        //holder.itemView.setOnClickListener {
             listener.onClickItem(items[position])
         }
         holder.binding.likeImageView.setOnClickListener{
-            listener.onClickFavorite(items[position])
+            listener.onClickFavorite(items[position], holder.binding.likeImageView)
         }
         holder.binding.shareImageView.setOnClickListener{
             listener.onClickShare(items[position])
@@ -58,9 +61,8 @@ class PhotosRemoteListAdapter(val listener: ClickListener) : RecyclerView.Adapte
 
     interface ClickListener {
         fun onClickItem(photo: PhotoRemote) {}
-        fun onClickFavorite(photo: PhotoRemote) {}
+        fun onClickFavorite(photo: PhotoRemote, imageView: ImageView) {}
         fun onClickShare(photo: PhotoRemote) {}
-
     }
 
 }

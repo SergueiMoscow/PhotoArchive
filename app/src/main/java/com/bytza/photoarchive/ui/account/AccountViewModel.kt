@@ -5,12 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bytza.photoarchive.model.LoginApi
+import com.bytza.photoarchive.model.LoginResponse
 import retrofit2.Retrofit
 
 class AccountViewModel : ViewModel() {
-    private val _token = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+    private val _session = MutableLiveData<LoginResponse>().apply {
+        value = LoginResponse("Session", "Message")
     }
-    val token: LiveData<String> = _token
+    val session: LiveData<LoginResponse> = _session
 
 }
