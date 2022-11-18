@@ -4,7 +4,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bytza.photoarchive.model.LoginApi
 import com.bytza.photoarchive.model.LoginResponse
 import retrofit2.Retrofit
 

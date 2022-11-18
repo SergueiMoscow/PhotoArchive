@@ -11,15 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.FragmentLoginBinding
-import com.bytza.photoarchive.model.LoginApi
 import com.bytza.photoarchive.model.LoginResponse
+import com.bytza.photoarchive.model.photo.PhotoService
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -57,8 +56,10 @@ class LoginFragment : Fragment() {
                 .baseUrl("https://sushkovs.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            var loginApi = retrofit.create(LoginApi::class.java)
-            var result = loginApi.login(user, pass)
+            //var loginApi = retrofit.create(LoginApi::class.java)
+            // Объединяем все api в PhotoServie:
+            val loginApi = retrofit.create(PhotoService::class.java)
+            val result = loginApi.login(user, pass)
             result.enqueue(object: Callback<LoginResponse>{
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     var gson = Gson()
@@ -70,12 +71,12 @@ class LoginFragment : Fragment() {
                     if (prefs != null) {
                         val prefsEditor = prefs.edit()
                         prefsEditor.putString("session", loginResponse?.session)
-                        prefsEditor.commit()
+                        prefsEditor.apply()
                     }
                     Navigation.findNavController(it).navigate(R.id.action_navigation_login_to_navigation_account)
                 }
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    binding.remoteIdTextView.text="Login failed"
+                    binding.remoteIdTextView.text=getString(R.string.login_failed)
                 }
             })
             binding.remoteIdTextView.text = result.toString()

@@ -5,12 +5,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.FragmentEditPhotoBinding
 import com.bytza.photoarchive.databinding.PhotoLocalListItemBinding
+import com.bytza.photoarchive.model.LoginResponse
 import com.bytza.photoarchive.model.photo.PhotoRemote
+import com.bytza.photoarchive.model.photo.PhotoService
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "itemRemote"
@@ -54,7 +63,8 @@ class EditPhotoFragment : Fragment() {
             binding.item = photoRemote
             Picasso.get().load(url).into(binding.imageView)
             binding.button.setOnClickListener() {
-
+                photoRemote!!.descript = binding.nameEditText.text.toString()
+                update(photoRemote!!)
             }
         }
     }
@@ -64,6 +74,27 @@ class EditPhotoFragment : Fragment() {
         if (fm != null) {
             fm.popBackStack()
         }
+    }
+
+    fun update(photo: PhotoRemote)
+    {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://sushkovs.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val photoApi = retrofit.create(PhotoService::class.java)
+        val result = photoApi.updatePhoto(photo.id, photo.descript)
+        result.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val string = response.body().toString()
+                print(string)
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                var err = t
+                print(t)
+            }
+        })
+
     }
 
     companion object {
