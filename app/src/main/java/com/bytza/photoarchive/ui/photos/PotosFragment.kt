@@ -2,16 +2,13 @@ package com.bytza.photoarchive.ui.photos
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,14 +19,10 @@ import com.bytza.photoarchive.model.DbConnection
 import com.bytza.photoarchive.model.photo.PhotoRemote
 import com.bytza.photoarchive.model.photo.PhotosLocal
 import com.bytza.photoarchive.model.photo.PhotosLocalRepository
-import com.google.gson.Gson
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Picasso.LoadedFrom
 import kotlinx.coroutines.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.System.load
 
 
 class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
@@ -44,6 +37,7 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
     private var thisView: View? = null
     private lateinit var db: DbConnection
     private lateinit var localRepository: PhotosLocalRepository
+    private lateinit var photosViewModel: PhotosRemoteViewModel
 
 
     override fun onCreateView(
@@ -52,9 +46,9 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
         savedInstanceState: Bundle?
     ): View {
         scope = MainScope()
-        val photosViewModel =
-            ViewModelProvider(this).get(PhotosRemoteViewModel::class.java)
-
+        photosViewModel =
+            ViewModelProvider(requireActivity()).get(PhotosRemoteViewModel::class.java)
+        photosViewModel.instance = "PhotosFragment"
         _binding = FragmentPhotosBinding.inflate(inflater, container, false)
 
         val root: View = binding.root
@@ -71,13 +65,16 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
 
         val adapter = PhotosRemoteListAdapter(this)
         binding.photosRecyclerView.adapter = adapter
-        val photosViewModel = ViewModelProvider(this)[PhotosRemoteViewModel::class.java]
         photosViewModel.photos.observe(requireActivity()) {
             if (it != null) {
                 adapter.items = it
+                if (photosViewModel.currentEditItem != null) {
+                    adapter.items[1].descript = photosViewModel.currentEditItem!!.descript
+                }
+                photosViewModel.currentEditItem = null
+                photosViewModel.currentEditPosition = null
             }
         }
-
     }
 
     override fun onDestroyView() {
@@ -111,11 +108,8 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
     override fun onClickItem(photo: PhotoRemote) {
         super.onClickItem(photo)
 
-        val bundle: Bundle = Bundle()
-        val gson = Gson()
-        val jsonString = gson.toJson(photo)
-        bundle.putString("itemRemote", jsonString)
-        thisView?.let { Navigation.findNavController(it).navigate(R.id.action_navigation_photos_to_navigation_edit_remote, bundle) }
+        photosViewModel.currentEditItem = photo
+        thisView?.let { Navigation.findNavController(it).navigate(R.id.action_navigation_photos_to_navigation_edit_remote) }
     }
 
     override fun onClickShare(photo: PhotoRemote) {
@@ -134,7 +128,7 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
     }
 
     fun convertRemoteToLocal(photoRemote: PhotoRemote) : PhotosLocal {
-        var photoLocal = PhotosLocal(null, photoRemote.id, photoRemote.fname, photoRemote.fsize, photoRemote.fcreated, photoRemote.descript, photoRemote.tags)
+        val photoLocal = PhotosLocal(null, photoRemote.id, photoRemote.fname, photoRemote.fsize, photoRemote.fcreated, photoRemote.descript, photoRemote.tags)
         return photoLocal
     }
 
@@ -146,11 +140,6 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "image/*"
             val localBitmapUri=getLocalBitmapUri(bitmap)
-//            val localBitmapUri= FileProvider.getUriForFile(
-//                this,
-//                "com.bytza.photoarchive.provider",
-//                bitmap
-//            )
             intent.putExtra(Intent.EXTRA_STREAM, localBitmapUri)
              startActivity(Intent.createChooser(intent, getString(R.string.share_sith)));
             //startActivity(intent)
@@ -170,20 +159,9 @@ class PotosFragment : Fragment(), PhotosRemoteListAdapter.ClickListener {
                 "com.bytza.photoarchive",
                 file
             )
-//            val exists = fileJustDir.exists()
-//            val canWrite = fileJustDir.canWrite()
-//            val fileExists = file.exists()
-//            val databasePath = this.context?.getApplicationContext()?.getDatabasePath("db");
-
-
-//            var out: FileOutputStream =  FileOutputStream(file);
-//            bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
-//            out.close();
-//            bmpUri = Uri.fromFile(file);
         } catch (e: IOException) {
             e.printStackTrace();
         }
         return bmpUri
     }
-
 }

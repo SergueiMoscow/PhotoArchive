@@ -1,16 +1,17 @@
 package com.bytza.photoarchive.ui
 
+import android.app.Instrumentation
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.Navigation
-import com.bytza.photoarchive.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bytza.photoarchive.databinding.FragmentEditPhotoBinding
 import com.bytza.photoarchive.model.photo.PhotoRemote
 import com.bytza.photoarchive.model.photo.PhotoService
-import com.google.gson.Gson
+import com.bytza.photoarchive.ui.photos.PhotosRemoteViewModel
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -34,44 +35,43 @@ class EditPhotoFragment : Fragment() {
     private var photoRemote: PhotoRemote? = null
     private lateinit var binding: FragmentEditPhotoBinding
     private var thisView: View? = null
+    private lateinit var photosViewModel: PhotosRemoteViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ITEM_REMOTE)
-        }
-        if (param1 != null) {
-            var gson = Gson()
-            photoRemote = gson.fromJson(param1, PhotoRemote::class.java)
-        }
+
+        photosViewModel = ViewModelProvider(requireActivity()).get(PhotosRemoteViewModel::class.java)
+        photoRemote=photosViewModel.currentEditItem
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-
         binding = FragmentEditPhotoBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         thisView = view
         if (photoRemote != null) {
-            var name = photoRemote!!.descript
             val url = photoRemote!!.fname
             binding.item = photoRemote
             Picasso.get().load(url).into(binding.imageView)
             binding.button.setOnClickListener() {
                 photoRemote!!.descript = binding.nameEditText.text.toString()
                 update(photoRemote!!)
-                //thisView?.let { Navigation.findNavController(it).navigate(R.id.action_navigation_edit_remote_to_navigation_photos) }
-                //onBackPressed()
-
+// вариант 1 Так список обновляется целиком и показывается верх после возврата с edit
+//                thisView?.let { Navigation.findNavController(it).navigate(R.id.action_navigation_edit_remote_to_navigation_photos) }
+// вариант 2 Так возвращается на место, но следующее edit вылетает из программы
+//                onBackPressed()
+// вариант 3 Так первым нажатием закрывает клавиатуру, вторым выходит на место. Приемлемо.
+                Thread {
+                    val inst = Instrumentation()
+                    inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+                }.start()
             }
         }
     }
@@ -104,23 +104,22 @@ class EditPhotoFragment : Fragment() {
 
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EditPhotoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EditPhotoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ITEM_REMOTE, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+//    companion object {
+//        /**
+//         * Use this factory method to create a new instance of
+//         * this fragment using the provided parameters.
+//         *
+//         * @param param1 Parameter 1.
+//         * @param param2 Parameter 2.
+//         * @return A new instance of fragment EditPhotoFragment.
+//         */
+//        @JvmStatic
+//        fun newInstance(param1: String, param2: String) =
+//            EditPhotoFragment().apply {
+//                arguments = Bundle().apply {
+//                    putString(ITEM_REMOTE, param1)
+//                    putString(ARG_PARAM2, param2)
+//                }
+//            }
+//    }
 }
