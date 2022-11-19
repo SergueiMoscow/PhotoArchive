@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/navigation_login"
         android:name="com.bytza.photoarchive.ui.account.LoginFragment"
-        android:label="LoginFragment"
+        android:label="@string/login"
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_navigation_login_to_navigation_account"
@@ -43,7 +43,7 @@
     <fragment
         android:id="@+id/navigation_edit_remote"
         android:name="com.bytza.photoarchive.ui.EditPhotoFragment"
-        android:label="title_edit_photo"
+        android:label="@string/edit"
         tools:layout="@layout/fragment_edit_photo">
         <action
             android:id="@+id/action_navigation_edit_remote_to_navigation_photos"

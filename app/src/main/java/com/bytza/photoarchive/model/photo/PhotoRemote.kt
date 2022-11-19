@@ -1,5 +1,7 @@
 package com.bytza.photoarchive.model.photo
 
+import android.text.Editable
+
 
 data class PhotoRemote(
     val id: Int,

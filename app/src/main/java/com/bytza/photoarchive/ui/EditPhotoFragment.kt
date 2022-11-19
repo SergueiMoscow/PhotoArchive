@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.bytza.photoarchive.R
 import com.bytza.photoarchive.databinding.FragmentEditPhotoBinding
-import com.bytza.photoarchive.databinding.PhotoLocalListItemBinding
-import com.bytza.photoarchive.model.LoginResponse
 import com.bytza.photoarchive.model.photo.PhotoRemote
 import com.bytza.photoarchive.model.photo.PhotoService
 import com.google.gson.Gson
@@ -20,9 +18,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "itemRemote"
+private const val ITEM_REMOTE = "itemRemote"
 private const val ARG_PARAM2 = "param2"
 
 /**
@@ -34,10 +33,12 @@ class EditPhotoFragment : Fragment() {
     private var param1: String? = null
     private var photoRemote: PhotoRemote? = null
     private lateinit var binding: FragmentEditPhotoBinding
+    private var thisView: View? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
+            param1 = it.getString(ITEM_REMOTE)
         }
         if (param1 != null) {
             var gson = Gson()
@@ -55,8 +56,11 @@ class EditPhotoFragment : Fragment() {
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        thisView = view
         if (photoRemote != null) {
             var name = photoRemote!!.descript
             val url = photoRemote!!.fname
@@ -65,6 +69,9 @@ class EditPhotoFragment : Fragment() {
             binding.button.setOnClickListener() {
                 photoRemote!!.descript = binding.nameEditText.text.toString()
                 update(photoRemote!!)
+                //thisView?.let { Navigation.findNavController(it).navigate(R.id.action_navigation_edit_remote_to_navigation_photos) }
+                //onBackPressed()
+
             }
         }
     }
@@ -111,7 +118,7 @@ class EditPhotoFragment : Fragment() {
         fun newInstance(param1: String, param2: String) =
             EditPhotoFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
+                    putString(ITEM_REMOTE, param1)
                     putString(ARG_PARAM2, param2)
                 }
             }

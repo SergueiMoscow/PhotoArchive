@@ -21,4 +21,8 @@
     <string name="base_url">https://sushkovs.com/photoarchive/api</string>
     <string name="share_sith">Share</string>
     <string name="login_failed">Login failed</string>
+    <string name="type_description">Type description</string>
+    <string name="description">Description</string>
+    <string name="image">Image</string>
+    <string name="edit">Edit</string>
 </resources>
